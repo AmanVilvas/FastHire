@@ -1,9 +1,9 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Zap, Target, Shield, Sparkles, Send, User, Code, Smartphone, Briefcase, Palette } from "lucide-react";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 interface WelcomeScreenProps {
   onGetStarted: (prompt: string) => void;
@@ -11,6 +11,7 @@ interface WelcomeScreenProps {
 
 const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
   const [prompt, setPrompt] = useState("");
+  const [showSupportDialog, setShowSupportDialog] = useState(false);
 
   const recommendations = [
     { icon: Code, label: "Software Developer", prompt: "I want to create a resume for a Software Developer position" },
@@ -30,18 +31,23 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
     setPrompt(recommendationPrompt);
   };
 
+  const handleSupportAndContinue = () => {
+    // Implementation of handleSupportAndContinue
+  };
+
+  const handleJustContinue = () => {
+    // Implementation of handleJustContinue
+  };
+
   return (
     <div className="max-w-4xl mx-auto text-center">
       {/* Hero Section */}
       <div className="mb-16">
         <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
-          Build something{" "}
-          <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-            career-winning
-          </span>
+          Build something <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">career&#8209;winning</span>
         </h2>
         <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-12">
-          Resume to job offer in seconds, with your personal AI career assistant
+          Resume to job offer in seconds, with FastHire
         </p>
         
         {/* Recommendation Buttons */}
@@ -149,6 +155,38 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
+        <DialogContent className="text-center bg-white rounded-xl shadow-2xl p-8 max-w-sm mx-auto">
+          <DialogHeader>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-2xl">💸</span>
+              <DialogTitle className="text-lg font-semibold text-gray-900">
+                Support FastHire?
+              </DialogTitle>
+            </div>
+          </DialogHeader>
+          <p className="text-gray-600 text-base mb-6">
+            If you'd like to support us, you can gift a small amount.<br />
+            Otherwise, just continue for free.
+          </p>
+          <DialogFooter className="flex flex-col gap-2">
+            <Button
+              onClick={handleSupportAndContinue}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition"
+            >
+              <span className="mr-2">💸</span> Gift & Continue
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleJustContinue}
+              className="w-full border-gray-300 text-gray-700 py-2 rounded-lg"
+            >
+              Just Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

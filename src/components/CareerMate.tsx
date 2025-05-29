@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import WelcomeScreen from "./career/WelcomeScreen";
 import UserInfoForm from "./career/UserInfoForm";
 import ResumePreview from "./career/ResumePreview";
 import CoverLetterPreview from "./career/CoverLetterPreview";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
 
 export interface UserData {
   personalInfo: {
@@ -83,6 +83,8 @@ const CareerMate = () => {
   const [currentStep, setCurrentStep] = useState<Step>("welcome");
   const [userData, setUserData] = useState<UserData>(initialUserData);
   const [initialPrompt, setInitialPrompt] = useState("");
+  const [showSupportDialog, setShowSupportDialog] = useState(false);
+  const [pendingUserData, setPendingUserData] = useState<UserData | null>(null);
 
   // Show loading spinner while checking auth
   if (loading) {
@@ -104,8 +106,28 @@ const CareerMate = () => {
   };
 
   const handleFormComplete = (data: UserData) => {
-    setUserData(data);
-    setCurrentStep("resume");
+    setPendingUserData(data);
+    setShowSupportDialog(true);
+  };
+
+  const handleSupportAndContinue = () => {
+    setShowSupportDialog(false);
+    window.open('https://razorpay.me/@amansharma6045', '_blank');
+    // Optionally, proceed to resume after payment
+    if (pendingUserData) {
+      setUserData(pendingUserData);
+      setCurrentStep("resume");
+      setPendingUserData(null);
+    }
+  };
+
+  const handleJustContinue = () => {
+    setShowSupportDialog(false);
+    if (pendingUserData) {
+      setUserData(pendingUserData);
+      setCurrentStep("resume");
+      setPendingUserData(null);
+    }
   };
 
   const handleViewCoverLetter = () => {
@@ -133,10 +155,13 @@ const CareerMate = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg">
-              <UserCircle2 className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-white">FastHire</h1>
+            <a
+              href="/"
+              className="text-3xl font-bold text-white tracking-tight"
+              style={{ fontFamily: "'Fugaz One', cursive" }}
+            >
+              FastHire
+            </a>
           </div>
 
           {/* User Profile */}
@@ -218,6 +243,37 @@ const CareerMate = () => {
             />
           )}
         </div>
+        <Dialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
+          <DialogContent className="text-center bg-white rounded-xl shadow-2xl p-8 max-w-sm mx-auto">
+            <DialogHeader>
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-2xl">💸</span>
+                <DialogTitle className="text-lg font-semibold text-gray-900">
+                  Support FastHire?
+                </DialogTitle>
+              </div>
+            </DialogHeader>
+            <p className="text-gray-600 text-base mb-6">
+              If you'd like to support us, you can gift a small amount.<br />
+              Otherwise, just continue for free.
+            </p>
+            <DialogFooter className="flex flex-col gap-2">
+              <Button
+                onClick={handleSupportAndContinue}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition"
+              >
+                <span className="mr-2">💸</span> Gift & Continue
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleJustContinue}
+                className="w-full border-gray-300 text-gray-700 py-2 rounded-lg"
+              >
+                Just Continue
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
