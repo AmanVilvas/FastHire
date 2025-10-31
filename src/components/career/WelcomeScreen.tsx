@@ -32,16 +32,16 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
   };
 
   const handleSupportAndContinue = () => {
-    // Implementation of handleSupportAndContinue
+    setShowSupportDialog(false);
+    window.open('https://razorpay.me/@amansharma6045', '_blank');
   };
 
   const handleJustContinue = () => {
-    // Implementation of handleJustContinue
+    setShowSupportDialog(false);
   };
 
   return (
     <div className="max-w-4xl mx-auto text-center">
-      {/* Hero Section */}
       <div className="mb-16">
         <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
           Build something <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">career&#8209;winning</span>
@@ -50,7 +50,6 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           Resume to job offer in seconds, with FastHire
         </p>
         
-        {/* Recommendation Buttons */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
           {recommendations.map((rec, index) => (
             <Button
@@ -65,7 +64,6 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           ))}
         </div>
 
-        {/* Type Bar */}
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto mb-8">
           <div className="relative bg-black/40 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:border-blue-400/50 transition-all duration-200">
             <div className="flex items-center gap-4">
@@ -97,7 +95,6 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
         </form>
       </div>
 
-      {/* Feature Tags */}
       <div className="flex flex-wrap justify-center gap-4 mb-16">
         <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3 flex items-center gap-2">
           <Zap className="h-4 w-4 text-blue-400" />
@@ -117,7 +114,6 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
         </div>
       </div>
 
-      {/* Features Grid */}
       <div className="grid md:grid-cols-3 gap-6">
         <Card className="bg-black/20 backdrop-blur-sm border border-white/10 hover:border-blue-500/30 transition-all duration-200">
           <CardContent className="p-6 text-center">

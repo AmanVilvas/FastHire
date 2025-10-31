@@ -8,14 +8,11 @@ export const generateResumePDF = (userData: UserData) => {
   const margin = 20;
   let yPosition = 30;
 
-  // Helper function to add text with word wrapping
   const addText = (text: string, x: number, y: number, options: any = {}) => {
     const lines = doc.splitTextToSize(text, pageWidth - (margin * 2));
     doc.text(lines, x, y, options);
     return y + (lines.length * 6);
   };
-
-  // Header
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
   yPosition = addText(`${userData.personalInfo.firstName} ${userData.personalInfo.lastName}`, margin, yPosition);
@@ -30,8 +27,6 @@ export const generateResumePDF = (userData: UserData) => {
   yPosition = addText(`${userData.personalInfo.email} | ${userData.personalInfo.phone} | ${userData.personalInfo.location}`, margin, yPosition + 5);
   
   yPosition += 15;
-
-  // Professional Summary
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   yPosition = addText('PROFESSIONAL SUMMARY', margin, yPosition);
@@ -43,8 +38,6 @@ export const generateResumePDF = (userData: UserData) => {
   yPosition = addText(summary, margin, yPosition + 8);
   
   yPosition += 10;
-
-  // Experience
   if (userData.experience.length > 0) {
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
@@ -82,8 +75,6 @@ export const generateResumePDF = (userData: UserData) => {
       yPosition += 5;
     });
   }
-
-  // Education
   if (userData.education.length > 0) {
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
@@ -108,8 +99,6 @@ export const generateResumePDF = (userData: UserData) => {
       yPosition += 10;
     });
   }
-
-  // Skills
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   yPosition = addText('TECHNICAL SKILLS', margin, yPosition);
@@ -131,9 +120,6 @@ export const generateResumePDF = (userData: UserData) => {
     yPosition = addText(userData.skills.soft.join(' • '), margin, yPosition + 8);
   }
 
-  // Generate filename
   const fileName = `${userData.personalInfo.firstName}_${userData.personalInfo.lastName}_Resume.pdf`;
-  
-  // Save the PDF
   doc.save(fileName);
 };

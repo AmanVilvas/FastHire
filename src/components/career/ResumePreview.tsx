@@ -29,7 +29,6 @@ const ResumePreview = ({ userData, onViewCoverLetter, onEditInfo }: ResumePrevie
   const handleDownload = () => {
     try {
       generateATSOptimizedResumePDF(userData);
-      console.log("ATS-optimized resume downloaded successfully");
     } catch (error) {
       console.error("Error downloading resume:", error);
     }
@@ -37,11 +36,9 @@ const ResumePreview = ({ userData, onViewCoverLetter, onEditInfo }: ResumePrevie
 
   return (
     <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8">
-      {/* Preview */}
       <div className="order-2 lg:order-1">
         <Card className="bg-white shadow-xl border-0 h-fit">
           <CardContent className="p-8">
-            {/* Header */}
             <div className="text-center border-b pb-6 mb-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {userData.personalInfo.firstName} {userData.personalInfo.lastName}

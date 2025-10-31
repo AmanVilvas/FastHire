@@ -136,7 +136,6 @@ const UserInfoForm = ({ initialData, onComplete, initialPrompt }: UserInfoFormPr
           </p>
           {initialPrompt && (
             <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-800 font-medium">Your request:</p>
               <p className="text-sm text-blue-600">{initialPrompt}</p>
             </div>
           )}
@@ -146,7 +145,7 @@ const UserInfoForm = ({ initialData, onComplete, initialPrompt }: UserInfoFormPr
           <Tabs defaultValue="personal" className="w-full">
             <TabsList className="grid grid-cols-5 w-full mb-6">
               <TabsTrigger value="personal">Personal</TabsTrigger>
-              <TabsTrigger value="target">Target Job</TabsTrigger>
+              <TabsTrigger value="target">Job</TabsTrigger>
               <TabsTrigger value="experience">Experience</TabsTrigger>
               <TabsTrigger value="education">Education</TabsTrigger>
               <TabsTrigger value="skills">Skills</TabsTrigger>

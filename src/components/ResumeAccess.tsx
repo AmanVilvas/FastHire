@@ -16,8 +16,6 @@ export const ResumeAccess = () => {
     setIsLoading(true);
 
     try {
-      // Here you can implement your access code verification logic
-      // For now, we'll use a simple check
       if (accessCode === 'FAST-HIRE-2024') {
         setHasAccess(true);
         toast.success('Access granted!');
@@ -37,9 +35,7 @@ export const ResumeAccess = () => {
 
   const handleSupportAndDownload = () => {
     setShowDialog(false);
-    // Placeholder: open payment link
     window.open('https://buy.stripe.com/test_00g3eQ2wA2wQ0yQeUU', '_blank');
-    // Optionally, trigger download after payment
   };
 
   const handleJustDownload = () => {
@@ -58,7 +54,6 @@ export const ResumeAccess = () => {
           <div className="space-y-4">
             <div className="p-4 border rounded-lg">
               <h3 className="font-semibold mb-2">Resume Preview</h3>
-              {/* Add your resume preview component here */}
               <p className="text-sm text-gray-500">Resume content will be displayed here...</p>
             </div>
             <Button 

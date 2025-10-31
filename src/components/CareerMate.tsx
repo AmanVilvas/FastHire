@@ -86,7 +86,6 @@ const CareerMate = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [pendingUserData, setPendingUserData] = useState<UserData | null>(null);
 
-  // Show loading spinner while checking auth
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
@@ -95,7 +94,6 @@ const CareerMate = () => {
     );
   }
 
-  // Show auth page if user is not authenticated
   if (!user || !session) {
     return <AuthPage onAuthSuccess={() => {}} />;
   }
@@ -150,10 +148,8 @@ const CareerMate = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
-      {/* Top Navigation */}
       <div className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <a
               href="/"
@@ -164,7 +160,6 @@ const CareerMate = () => {
             </a>
           </div>
 
-          {/* User Profile */}
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-blue-600 text-white text-sm">
@@ -185,7 +180,6 @@ const CareerMate = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Progress Indicator */}
         {currentStep !== "welcome" && (
           <div className="flex justify-center mb-12">
             <div className="flex items-center space-x-4 bg-black/20 backdrop-blur-sm rounded-full px-6 py-3 border border-white/10">
@@ -213,7 +207,6 @@ const CareerMate = () => {
           </div>
         )}
 
-        {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           {currentStep === "welcome" && (
             <WelcomeScreen onGetStarted={handleGetStarted} />
