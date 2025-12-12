@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Mail, ArrowRight, User, LogOut } from "lucide-react";
+import { FileText, Mail, ArrowRight, User, Home } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useAuth } from "@/contexts/AuthContext";
-import AuthPage from "./auth/AuthPage";
 import FastHireApp from "./app/FastHireApp";
 import UserInfoForm from "./career/UserInfoForm";
 import ResumePreview from "./career/ResumePreview";
 import CoverLetterPreview from "./career/CoverLetterPreview";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
+import { GuestInfo } from "./FastHireLanding";
 
 export interface UserData {
   personalInfo: {
@@ -77,33 +76,35 @@ const initialUserData: UserData = {
 
 type Step = "welcome" | "form" | "resume" | "cover-letter";
 
-const CareerMate = () => {
-  const { user, session, loading, signOut } = useAuth();
-  const [currentStep, setCurrentStep] = useState<Step>("welcome");
-  const [userData, setUserData] = useState<UserData>(initialUserData);
-  const [initialPrompt, setInitialPrompt] = useState("");
+interface GuestCareerMateProps {
+  guestInfo: GuestInfo;
+  onBackToLanding: () => void;
+  initialPrompt?: string;
+  skipWelcome?: boolean;
+}
+
+const GuestCareerMate = ({ guestInfo, onBackToLanding, initialPrompt: propInitialPrompt, skipWelcome }: GuestCareerMateProps) => {
+  // Start at form if skipWelcome is true (coming from FastHireApp)
+  const [currentStep, setCurrentStep] = useState<Step>(skipWelcome ? "form" : "welcome");
+  const [userData, setUserData] = useState<UserData>(() => {
+    // Pre-fill with guest info
+    const nameParts = guestInfo.name.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    
+    return {
+      ...initialUserData,
+      personalInfo: {
+        ...initialUserData.personalInfo,
+        firstName,
+        lastName,
+        email: guestInfo.email,
+      },
+    };
+  });
+  const [initialPrompt, setInitialPrompt] = useState(propInitialPrompt || "");
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [pendingUserData, setPendingUserData] = useState<UserData | null>(null);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white flex items-center justify-center">
-        <div className="text-blue-600 text-xl font-medium">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user || !session) {
-    return (
-      <AuthPage 
-        onAuthSuccess={() => {}} 
-        onContinueAsGuest={() => {
-          // Go back to the app in guest mode by redirecting
-          window.location.href = '/';
-        }}
-      />
-    );
-  }
 
   const handleGetStarted = (prompt: string) => {
     setInitialPrompt(prompt);
@@ -118,7 +119,6 @@ const CareerMate = () => {
   const handleSupportAndContinue = () => {
     setShowSupportDialog(false);
     window.open('https://razorpay.me/@amansharma6045', '_blank');
-    // Optionally, proceed to resume after payment
     if (pendingUserData) {
       setUserData(pendingUserData);
       setCurrentStep("resume");
@@ -147,18 +147,13 @@ const CareerMate = () => {
     setCurrentStep("form");
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    setCurrentStep("welcome");
-    setUserData(initialUserData);
-  };
-
   // Show the new FastHireApp for the welcome screen
   if (currentStep === "welcome") {
     return (
       <FastHireApp
-        guestName={user.email?.split('@')[0] || 'User'}
+        guestName={guestInfo.name}
         onPromptSubmit={handleGetStarted}
+        onBackToLanding={onBackToLanding}
       />
     );
   }
@@ -172,7 +167,7 @@ const CareerMate = () => {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => setCurrentStep("welcome")}
+              onClick={skipWelcome ? onBackToLanding : () => setCurrentStep("welcome")}
               className="flex items-center gap-2"
             >
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
@@ -181,21 +176,33 @@ const CareerMate = () => {
               <span className="text-lg font-semibold text-gray-800">Fast Hire</span>
             </button>
           </div>
+          
+          {/* Show the prompt that was submitted */}
+          {initialPrompt && currentStep === "form" && (
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-200">
+              <span className="text-sm text-blue-600 font-medium">📝 {initialPrompt}</span>
+            </div>
+          )}
 
+          {/* User Profile (Guest) */}
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-blue-500 text-white text-sm">
                 <User className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>
-            <span className="text-gray-800 text-sm font-medium">{user.email}</span>
+            <div className="flex flex-col">
+              <span className="text-gray-800 text-sm font-medium">{guestInfo.name}</span>
+              <span className="text-gray-500 text-xs">Guest</span>
+            </div>
             <Button
-              onClick={handleSignOut}
+              onClick={onBackToLanding}
               variant="ghost"
               size="sm"
               className="text-gray-600 hover:bg-gray-100"
+              title="Back to Home"
             >
-              <LogOut className="h-4 w-4" />
+              <Home className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -228,6 +235,7 @@ const CareerMate = () => {
           </div>
         </div>
 
+        {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           {currentStep === "form" && (
             <UserInfoForm 
@@ -290,4 +298,4 @@ const CareerMate = () => {
   );
 };
 
-export default CareerMate;
+export default GuestCareerMate;
