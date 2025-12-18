@@ -9,6 +9,7 @@ import UserInfoForm from "./career/UserInfoForm";
 import ResumePreview from "./career/ResumePreview";
 import CoverLetterPreview from "./career/CoverLetterPreview";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 export interface UserData {
   personalInfo: {
@@ -79,6 +80,7 @@ type Step = "welcome" | "form" | "resume" | "cover-letter";
 
 const CareerMate = () => {
   const { user, session, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<Step>("welcome");
   const [userData, setUserData] = useState<UserData>(initialUserData);
   const [initialPrompt, setInitialPrompt] = useState("");
@@ -98,8 +100,8 @@ const CareerMate = () => {
       <AuthPage 
         onAuthSuccess={() => {}} 
         onContinueAsGuest={() => {
-          // Go back to the app in guest mode by redirecting
-          window.location.href = '/';
+          // Continue without auth
+          navigate("/app");
         }}
       />
     );
