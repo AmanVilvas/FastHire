@@ -11,7 +11,7 @@ const DonateModal = ({ isOpen, onClose }: DonateModalProps) => {
   const [copiedWallet, setCopiedWallet] = useState(false);
 
   const upiId = "9034961137@ptsbi";
-  const walletAddress = ""; // Add your wallet address here
+  const walletAddress = "BtbrbDNZ7eR48L5jL7Tnt9VGEPt3oG95o4WXyokQ4no8";
 
   const copyToClipboard = (text: string, type: "upi" | "wallet") => {
     navigator.clipboard.writeText(text);
