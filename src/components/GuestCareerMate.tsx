@@ -8,71 +8,13 @@ import ResumePreview from "./career/ResumePreview";
 import CoverLetterPreview from "./career/CoverLetterPreview";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
 import { GuestInfo } from "./FastHireLanding";
-
-export interface UserData {
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    location: string;
-    linkedIn?: string;
-    portfolio?: string;
-  };
-  targetJob: {
-    title: string;
-    company: string;
-    industry: string;
-    description: string;
-  };
-  experience: Array<{
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    current: boolean;
-    achievements: string[];
-  }>;
-  education: Array<{
-    institution: string;
-    degree: string;
-    field: string;
-    graduationYear: string;
-    gpa?: string;
-  }>;
-  skills: {
-    technical: string[];
-    soft: string[];
-    languages: string[];
-  };
-  summary: string;
-}
-
-const initialUserData: UserData = {
-  personalInfo: {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    location: "",
-    linkedIn: "",
-    portfolio: "",
-  },
-  targetJob: {
-    title: "",
-    company: "",
-    industry: "",
-    description: "",
-  },
-  experience: [],
-  education: [],
-  skills: {
-    technical: [],
-    soft: [],
-    languages: [],
-  },
-  summary: "",
-};
+import type { UserData } from "@/types/userData";
+import { initialUserData } from "@/types/userData";
+import { mergeUserData } from "@/utils/resume/mergeUserData";
+import { extractResumeText } from "@/utils/resume/extractResumeText";
+import { parseResumeToUserData } from "@/utils/resume/parseResumeToUserData";
+import { toast } from "sonner";
+import { geminiExtractUserData } from "@/utils/resume/geminiExtractUserData";
 
 type Step = "welcome" | "form" | "resume" | "cover-letter";
 
@@ -81,9 +23,10 @@ interface GuestCareerMateProps {
   onBackToLanding: () => void;
   initialPrompt?: string;
   skipWelcome?: boolean;
+  resumePrefill?: Partial<UserData>;
 }
 
-const GuestCareerMate = ({ guestInfo, onBackToLanding, initialPrompt: propInitialPrompt, skipWelcome }: GuestCareerMateProps) => {
+const GuestCareerMate = ({ guestInfo, onBackToLanding, initialPrompt: propInitialPrompt, skipWelcome, resumePrefill }: GuestCareerMateProps) => {
   // Start at form if skipWelcome is true (coming from FastHireApp)
   const [currentStep, setCurrentStep] = useState<Step>(skipWelcome ? "form" : "welcome");
   const [userData, setUserData] = useState<UserData>(() => {
@@ -92,7 +35,7 @@ const GuestCareerMate = ({ guestInfo, onBackToLanding, initialPrompt: propInitia
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || '';
     
-    return {
+    const base: UserData = {
       ...initialUserData,
       personalInfo: {
         ...initialUserData.personalInfo,
@@ -101,13 +44,35 @@ const GuestCareerMate = ({ guestInfo, onBackToLanding, initialPrompt: propInitia
         email: guestInfo.email,
       },
     };
+
+    return mergeUserData(base, resumePrefill);
   });
   const [initialPrompt, setInitialPrompt] = useState(propInitialPrompt || "");
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [pendingUserData, setPendingUserData] = useState<UserData | null>(null);
 
-  const handleGetStarted = (prompt: string) => {
+  const handleGetStarted = async (prompt: string, file?: File) => {
     setInitialPrompt(prompt);
+
+    if (file) {
+      try {
+        toast.message("Reading your resume…");
+        const text = await extractResumeText(file);
+        let parsed;
+        try {
+          toast.message("Extracting details with AI…");
+          parsed = await geminiExtractUserData(text);
+        } catch (e) {
+          parsed = parseResumeToUserData(text);
+        }
+        setUserData((prev) => mergeUserData(prev, parsed));
+        toast.success("Personal info filled from resume. You can edit anything.");
+      } catch (e: any) {
+        console.error(e);
+        toast.error(e?.message || "Could not read that resume file.");
+      }
+    }
+
     setCurrentStep("form");
   };
 

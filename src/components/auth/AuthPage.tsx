@@ -51,7 +51,10 @@ const AuthPage = ({ onAuthSuccess, onContinueAsGuest }: AuthPageProps) => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://wgrlvodoufjudnnhlfmo.supabase.co/auth/v1/callback',
+          // IMPORTANT: This must be a URL on *your app*, and must be whitelisted
+          // in Supabase Auth settings (Redirect URLs).
+          // Using the Supabase callback URL here breaks the OAuth flow in SPAs.
+          redirectTo: `${window.location.origin}/auth`,
         },
       });
 

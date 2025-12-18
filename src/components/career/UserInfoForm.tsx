@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Trash2, ArrowRight } from "lucide-react";
-import { UserData } from "../CareerMate";
+import type { UserData } from "@/types/userData";
 
 interface UserInfoFormProps {
   initialData: UserData;

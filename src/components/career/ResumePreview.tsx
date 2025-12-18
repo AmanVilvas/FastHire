@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UserData } from "../CareerMate";
+import type { UserData } from "@/types/userData";
 import { Mail, Phone, MapPin, Download, Edit, FileText } from "lucide-react";
 import { generateATSOptimizedResumePDF } from "../../utils/atsOptimizedPdfGenerator";
 
